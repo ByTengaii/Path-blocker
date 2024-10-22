@@ -171,6 +171,7 @@ public class Environment {
                         this.agent.setX(cursor);
                     } else if (this.level[startRow][cursor] == 'y') {
                         System.out.println("Goal reached");
+                        //TODO: Level Up Mechanism
                         this.agent.setX(cursor);
                         break;
                     } else if (this.level[startRow][cursor] == '0') {
@@ -186,6 +187,7 @@ public class Environment {
                 System.out.println("Agent has moved right :");
                 break;
         }
+        printMap();
         return move;
     }
 
@@ -199,15 +201,7 @@ public class Environment {
     public Agent getAgent() {
         return this.agent;
     }
-
-    public int getGoalPositionX() {
-        return 0;
-    }
-
-    public int getGoalPositionY() {
-        return 0;
-    }
-
+    
     public boolean isGoalReached() {
         return false;
     }
