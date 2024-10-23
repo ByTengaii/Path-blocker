@@ -8,5 +8,7 @@ public class Test {
         Environment env = new Environment();
         Moves move = Moves.RIGHT;
         env.action(move);
+        move = Moves.UP;
+        env.action(move);
     }
 }

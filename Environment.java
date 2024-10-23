@@ -14,14 +14,14 @@ public class Environment {
 
     Environment() {
         // TODO: Implement constructor for level 1
-        this.currentLevel = 31;
+        this.currentLevel = 1;
         updateWorld(this.currentLevel);
     }
 
     Environment(Agent agent) {
         // TODO: Implement constructor for level 1
         this.agent = agent;
-        this.currentLevel = 31;
+        this.currentLevel = 1;
         updateWorld(this.currentLevel);
     }
 
@@ -44,6 +44,11 @@ public class Environment {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void levelUp() {
+        this.currentLevel++;
+        updateWorld(this.currentLevel);
     }
 
     private void initAgentAndGoal() {
@@ -75,14 +80,15 @@ public class Environment {
         }
     }
 
-    public Moves action(Moves move) {
+    public char[][] action(Moves move) {
         if (this.level == null) {
             System.out.println("The level has not been initialized");
             return null;
         }
         int startRow = this.agent.getY();
         int startColumn = this.agent.getX();
-
+        //TODO: Implement flag mechanisim for goal reached
+        boolean goalReached = false;
         switch (move) {
             case UP:
                 // System.out.println("Before loop, agent x: " + this.agent.getX() + " agent y:
@@ -95,8 +101,10 @@ public class Environment {
                         this.level[this.agent.getY()][startColumn] = '0';
                         this.agent.setY(cursor);
                     } else if (this.level[cursor][startColumn] == 'y') {
-                        System.out.println("Goal reached");
+                        this.level[cursor][startColumn] = 'x';
+                        this.level[this.agent.getY()][startColumn] = '0';
                         this.agent.setY(cursor);
+                        goalReached = true;
                         break;
                     } else if (this.level[cursor][startColumn] == '0') {
                         System.out.println("Wall found");
@@ -108,8 +116,9 @@ public class Environment {
                         return null;
                     }
                 }
+                break;
             case DOWN:
-            // System.out.println("Before loop, agent x: " + this.agent.getX() + " agent y:
+                // System.out.println("Before loop, agent x: " + this.agent.getX() + " agent y:
                 // " + this.agent.getY());
                 for (int cursor = startRow + 1; cursor < this.height; cursor++) {
                     // System.out.println("Loop triggered");
@@ -119,8 +128,10 @@ public class Environment {
                         this.level[this.agent.getY()][startColumn] = '0';
                         this.agent.setY(cursor);
                     } else if (this.level[cursor][startColumn] == 'y') {
-                        System.out.println("Goal reached");
+                        this.level[cursor][startColumn] = 'x';
+                        this.level[this.agent.getY()][startColumn] = '0';
                         this.agent.setY(cursor);
+                        goalReached = true;
                         break;
                     } else if (this.level[cursor][startColumn] == '0') {
                         System.out.println("Wall found");
@@ -132,6 +143,7 @@ public class Environment {
                         return null;
                     }
                 }
+                System.out.println("Agent has moved DOWN");
                 break;
             case LEFT:
                 // System.out.println("Before loop, agent x: " + this.agent.getX() + " agent y:
@@ -144,8 +156,10 @@ public class Environment {
                         this.level[startRow][this.agent.getX()] = '0';
                         this.agent.setX(cursor);
                     } else if (this.level[startRow][cursor] == 'y') {
-                        System.out.println("Goal reached");
+                        this.level[startRow][cursor] = 'x';
+                        this.level[startRow][this.agent.getX()] = '0';
                         this.agent.setX(cursor);
+                        goalReached = true;
                         break;
                     } else if (this.level[startRow][cursor] == '0') {
                         System.out.println("Wall found");
@@ -157,7 +171,7 @@ public class Environment {
                         return null;
                     }
                 }
-                System.out.println("Agent has moved right :");
+                System.out.println("Agent has moved LEFT");
                 break;
             case RIGHT:
                 // System.out.println("Before loop, agent x: " + this.agent.getX() + " agent y:
@@ -165,14 +179,15 @@ public class Environment {
                 for (int cursor = startColumn + 1; cursor < this.width; cursor++) {
                     // System.out.println("Loop triggered");
                     if (this.level[startRow][cursor] == '1') {
-                        System.out.println("agent found 1");
+                        //System.out.println("agent found 1");
                         this.level[startRow][cursor] = 'x';
                         this.level[startRow][this.agent.getX()] = '0';
                         this.agent.setX(cursor);
                     } else if (this.level[startRow][cursor] == 'y') {
-                        System.out.println("Goal reached");
-                        //TODO: Level Up Mechanism
+                        this.level[startRow][cursor] = 'x';
+                        this.level[startRow][this.agent.getX()] = '0';
                         this.agent.setX(cursor);
+                        goalReached = true;
                         break;
                     } else if (this.level[startRow][cursor] == '0') {
                         System.out.println("Wall found");
@@ -184,26 +199,19 @@ public class Environment {
                         return null;
                     }
                 }
-                System.out.println("Agent has moved right :");
                 break;
         }
+        System.out.println("Agent has moved " + move);
         printMap();
-        return move;
-    }
-
-    private boolean isWall(int x, int y) {
-        if (this.level[x][y] == '0') {
-            return true;
+        if (goalReached) {
+            System.out.println("Goal reached");
+            levelUp();
         }
-        return false;
-    }
+        return this.level;
+    }  
 
     public Agent getAgent() {
         return this.agent;
-    }
-    
-    public boolean isGoalReached() {
-        return false;
     }
 
     public void printMap() {
