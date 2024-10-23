@@ -21,9 +21,7 @@ public class Agent {
     public void setY(int y) {
         this.y = y;
     }
-    public void setScore(int score) {
-        this.score = score;
-    }
+
     public int getX() {
         return this.x;
     }

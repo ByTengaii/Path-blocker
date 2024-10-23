@@ -10,20 +10,19 @@ public class Environment {
     private char[][] level;
     private Agent agent;
     private Goal goal;
-    private int currentLevel;
 
-    Environment() {
-        // TODO: Implement constructor for level 1
-        this.currentLevel = 1;
-        updateWorld(this.currentLevel);
+    Environment(int level) {
+        updateWorld(level);
     }
 
-    Environment(Agent agent) {
-        // TODO: Implement constructor for level 1
-        this.agent = agent;
-        this.currentLevel = 1;
-        updateWorld(this.currentLevel);
+    Environment(Environment env){
+        this.width = env.width;
+        this.height = env.height;
+        this.level = env.level;
+        this.agent = env.agent;
+        this.goal = env.goal;
     }
+
 
     public boolean action(Moves move) {
         if (this.level == null) {
@@ -51,8 +50,7 @@ public class Environment {
                         goalReached = true;
                         break;
                     } else if (this.level[cursor][startColumn] == '0') {
-                        System.out.println("Wall found");
-                        // TODO: Implement wall found
+                        //System.out.println("Wall found");
                         break;
                     } else {
                         System.err.println("Invalid character in map");
@@ -78,8 +76,7 @@ public class Environment {
                         goalReached = true;
                         break;
                     } else if (this.level[cursor][startColumn] == '0') {
-                        System.out.println("Wall found");
-                        // TODO: Implement wall found
+                        //System.out.println("Wall found");
                         break;
                     } else {
                         System.err.println("Invalid character in map");
@@ -87,7 +84,6 @@ public class Environment {
                         return false;
                     }
                 }
-                System.out.println("Agent has moved DOWN");
                 break;
             case LEFT:
                 // System.out.println("Before loop, agent x: " + this.agent.getX() + " agent y:
@@ -106,7 +102,7 @@ public class Environment {
                         goalReached = true;
                         break;
                     } else if (this.level[startRow][cursor] == '0') {
-                        System.out.println("Wall found");
+                        //System.out.println("Wall found");
                         break;
                     } else {
                         System.err.println("Invalid character in map");
@@ -114,7 +110,6 @@ public class Environment {
                         return false;
                     }
                 }
-                System.out.println("Agent has moved LEFT");
                 break;
             case RIGHT:
                 // System.out.println("Before loop, agent x: " + this.agent.getX() + " agent y:
@@ -133,7 +128,7 @@ public class Environment {
                         goalReached = true;
                         break;
                     } else if (this.level[startRow][cursor] == '0') {
-                        System.out.println("Wall found");
+                        //System.out.println("Wall found");
                         // TODO: Implement wall found
                         break;
                     } else {
@@ -148,8 +143,6 @@ public class Environment {
         printMap();
         if (goalReached) {
             System.out.println("Goal reached");
-            levelUp();
-            // *If it is true, Agent stop generating new states */
             return true;
         }
         return false;
@@ -174,29 +167,30 @@ public class Environment {
         return this.level;
     };
 
+    //! Can be more optimize
     public List<Moves> getPosssibleMoves() {
         List<Moves> moveList = new ArrayList<>();
         Moves move;
         if (agent.getY() + 1 < this.height) {
-            if (this.level[this.agent.getY() + 1][this.agent.getX()] == '1') {
+            if (this.level[this.agent.getY() + 1][this.agent.getX()] != '0') {
                 move = Moves.DOWN;
                 moveList.add(move);
             }
         }
         if (agent.getY() - 1 >= 0) {
-            if (this.level[this.agent.getY() - 1][this.agent.getX()] == '1') {
+            if (this.level[this.agent.getY() - 1][this.agent.getX()] != '0') {
                 move = Moves.UP;
                 moveList.add(move);
             }
         }
         if (agent.getX() + 1 < this.width) {
-            if (this.level[this.agent.getY()][this.agent.getX() + 1] == '1') {
+            if (this.level[this.agent.getY()][this.agent.getX() + 1] != '0') {
                 move = Moves.RIGHT;
                 moveList.add(move);
             }
         }
         if (agent.getX() - 1 >= 0) {
-            if (this.level[this.agent.getY()][this.agent.getX() - 1] == '1') {
+            if (this.level[this.agent.getY()][this.agent.getX() - 1] != '0') {
                 move = Moves.LEFT;
                 moveList.add(move);
             }
@@ -205,7 +199,7 @@ public class Environment {
         return moveList;
     }
 
-    private void updateWorld(int mapLevel) {
+    public void updateWorld(int mapLevel) {
         // TODO: Implement createWorld
         String filePath = "./levels/level" + mapLevel + ".txt"; // Path to your file
         try {
@@ -224,11 +218,6 @@ public class Environment {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private void levelUp() {
-        this.currentLevel++;
-        updateWorld(this.currentLevel);
     }
 
     private void initAgentAndGoal() {

@@ -1,52 +1,38 @@
+import java.util.*;
+
 public class Node {
-    private int x;
-    private int y;
-    private int score;
     private Node parent;
-    
-    Node() {
-        this.x = 0;
-        this.y = 0;
-        this.score = 0;
-        this.parent = null;
-    }
+    private Environment env;
+    private int generation;
+    private List<Node> children = new ArrayList<>();
 
-    Node(int y, int x) {
-        this.y = y;
-        this.x = x;
-        this.score = 0;
-        this.parent = null;
-    }
-
-    Node(int y, int x, Node parent) {
-        this.y = y;
-        this.x = x;
-        this.score = 0;
+    Node(Node parent,Environment env, int generation) {
+        this.env = env;
+        this.generation = generation;
         this.parent = parent;
     }
 
-    public void setX(int x) {
-        this.x = x;
+    public Environment getEnv() {
+        return env;
     }
-    public void setY(int y) {
-        this.y = y;
+
+    public Node getParent() {return parent;}
+
+    public int getGeneration() {
+        return generation;
     }
-    public void setScore(int score) {
-        this.score = score;
+
+    public void addChild(Node child) {
+        this.children.add(child);
     }
-    public void setParent(Node parent) {
-        this.parent = parent;
+
+    public List<Node> getChildren() {
+        return children;
     }
-    public int getX() {
-        return this.x;
+
+    public int NumberOfChildren() {
+        return children.size();
     }
-    public int getY() {
-        return this.y;
-    }
-    public int getScore() {
-        return this.score;
-    }
-    public Node getParent() {
-        return this.parent;
-    }
+
+
 }
