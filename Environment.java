@@ -25,7 +25,187 @@ public class Environment {
         updateWorld(this.currentLevel);
     }
 
-    public void updateWorld(int mapLevel) {
+    public boolean action(Moves move) {
+        if (this.level == null) {
+            System.out.println("The level has not been initialized");
+            return false;
+        }
+        int startRow = this.agent.getY();
+        int startColumn = this.agent.getX();
+        boolean goalReached = false;
+        switch (move) {
+            case UP:
+                // System.out.println("Before loop, agent x: " + this.agent.getX() + " agent y:
+                // " + this.agent.getY());
+                for (int cursor = startRow - 1; cursor >= 0; cursor--) {
+                    // System.out.println("Loop triggered");
+                    if (this.level[cursor][startColumn] == '1') {
+                        // System.out.println("agent found 1");
+                        this.level[cursor][startColumn] = 'x';
+                        this.level[this.agent.getY()][startColumn] = '0';
+                        this.agent.setY(cursor);
+                    } else if (this.level[cursor][startColumn] == 'y') {
+                        this.level[cursor][startColumn] = 'x';
+                        this.level[this.agent.getY()][startColumn] = '0';
+                        this.agent.setY(cursor);
+                        goalReached = true;
+                        break;
+                    } else if (this.level[cursor][startColumn] == '0') {
+                        System.out.println("Wall found");
+                        // TODO: Implement wall found
+                        break;
+                    } else {
+                        System.err.println("Invalid character in map");
+                        printMap();
+                        return false;
+                    }
+                }
+                break;
+            case DOWN:;
+                // System.out.println("Before loop, agent x: " + this.agent.getX() + " agent y:
+                // " + this.agent.getY());
+                for (int cursor = startRow + 1; cursor < this.height; cursor++) {
+                    // System.out.println("Loop triggered");
+                    if (this.level[cursor][startColumn] == '1') {
+                        // System.out.println("agent found 1");
+                        this.level[cursor][startColumn] = 'x';
+                        this.level[this.agent.getY()][startColumn] = '0';
+                        this.agent.setY(cursor);
+                    } else if (this.level[cursor][startColumn] == 'y') {
+                        this.level[cursor][startColumn] = 'x';
+                        this.level[this.agent.getY()][startColumn] = '0';
+                        this.agent.setY(cursor);
+                        goalReached = true;
+                        break;
+                    } else if (this.level[cursor][startColumn] == '0') {
+                        System.out.println("Wall found");
+                        // TODO: Implement wall found
+                        break;
+                    } else {
+                        System.err.println("Invalid character in map");
+                        printMap();
+                        return false;
+                    }
+                }
+                System.out.println("Agent has moved DOWN");
+                break;
+            case LEFT:
+                // System.out.println("Before loop, agent x: " + this.agent.getX() + " agent y:
+                // " + this.agent.getY());
+                for (int cursor = startColumn - 1; cursor >= 0; cursor--) {
+                    // System.out.println("Loop triggered");
+                    if (this.level[startRow][cursor] == '1') {
+                        // System.out.println("agent found 1");
+                        this.level[startRow][cursor] = 'x';
+                        this.level[startRow][this.agent.getX()] = '0';
+                        this.agent.setX(cursor);
+                    } else if (this.level[startRow][cursor] == 'y') {
+                        this.level[startRow][cursor] = 'x';
+                        this.level[startRow][this.agent.getX()] = '0';
+                        this.agent.setX(cursor);
+                        goalReached = true;
+                        break;
+                    } else if (this.level[startRow][cursor] == '0') {
+                        System.out.println("Wall found");
+                        break;
+                    } else {
+                        System.err.println("Invalid character in map");
+                        printMap();
+                        return false;
+                    }
+                }
+                System.out.println("Agent has moved LEFT");
+                break;
+            case RIGHT:
+                // System.out.println("Before loop, agent x: " + this.agent.getX() + " agent y:
+                // " + this.agent.getY());
+                for (int cursor = startColumn + 1; cursor < this.width; cursor++) {
+                    // System.out.println("Loop triggered");
+                    if (this.level[startRow][cursor] == '1') {
+                        // System.out.println("agent found 1");
+                        this.level[startRow][cursor] = 'x';
+                        this.level[startRow][this.agent.getX()] = '0';
+                        this.agent.setX(cursor);
+                    } else if (this.level[startRow][cursor] == 'y') {
+                        this.level[startRow][cursor] = 'x';
+                        this.level[startRow][this.agent.getX()] = '0';
+                        this.agent.setX(cursor);
+                        goalReached = true;
+                        break;
+                    } else if (this.level[startRow][cursor] == '0') {
+                        System.out.println("Wall found");
+                        // TODO: Implement wall found
+                        break;
+                    } else {
+                        System.err.println("Invalid character in map");
+                        printMap();
+                        return false;
+                    }
+                }
+                break;
+        }
+        System.out.println("Agent has moved " + move);
+        printMap();
+        if (goalReached) {
+            System.out.println("Goal reached");
+            levelUp();
+            // *If it is true, Agent stop generating new states */
+            return true;
+        }
+        return false;
+
+    }
+
+    public Agent getAgent() {
+        return this.agent;
+    }
+
+    public void printMap() {
+        System.out.println("Level: ");
+        for (int i = 0; i < this.height; i++) {
+            for (int j = 0; j < this.width; j++) {
+                System.out.print(this.level[i][j]);
+            }
+            System.out.println();
+        }
+    }
+
+    public char[][] getLevel() {
+        return this.level;
+    };
+
+    public List<Moves> getPosssibleMoves() {
+        List<Moves> moveList = new ArrayList<>();
+        Moves move;
+        if (agent.getY() + 1 < this.height) {
+            if (this.level[this.agent.getY() + 1][this.agent.getX()] == '1') {
+                move = Moves.DOWN;
+                moveList.add(move);
+            }
+        }
+        if (agent.getY() - 1 >= 0) {
+            if (this.level[this.agent.getY() - 1][this.agent.getX()] == '1') {
+                move = Moves.UP;
+                moveList.add(move);
+            }
+        }
+        if (agent.getX() + 1 < this.width) {
+            if (this.level[this.agent.getY()][this.agent.getX() + 1] == '1') {
+                move = Moves.RIGHT;
+                moveList.add(move);
+            }
+        }
+        if (agent.getX() - 1 >= 0) {
+            if (this.level[this.agent.getY()][this.agent.getX() - 1] == '1') {
+                move = Moves.LEFT;
+                moveList.add(move);
+            }
+        }
+
+        return moveList;
+    }
+
+    private void updateWorld(int mapLevel) {
         // TODO: Implement createWorld
         String filePath = "./levels/level" + mapLevel + ".txt"; // Path to your file
         try {
@@ -78,156 +258,6 @@ public class Environment {
             printMap();
             System.exit(1);
         }
-    }
-
-    public char[][] action(Moves move) {
-        if (this.level == null) {
-            System.out.println("The level has not been initialized");
-            return null;
-        }
-        int startRow = this.agent.getY();
-        int startColumn = this.agent.getX();
-        //TODO: Implement flag mechanisim for goal reached
-        boolean goalReached = false;
-        switch (move) {
-            case UP:
-                // System.out.println("Before loop, agent x: " + this.agent.getX() + " agent y:
-                // " + this.agent.getY());
-                for (int cursor = startRow - 1; cursor >= 0; cursor--) {
-                    // System.out.println("Loop triggered");
-                    if (this.level[cursor][startColumn] == '1') {
-                        // System.out.println("agent found 1");
-                        this.level[cursor][startColumn] = 'x';
-                        this.level[this.agent.getY()][startColumn] = '0';
-                        this.agent.setY(cursor);
-                    } else if (this.level[cursor][startColumn] == 'y') {
-                        this.level[cursor][startColumn] = 'x';
-                        this.level[this.agent.getY()][startColumn] = '0';
-                        this.agent.setY(cursor);
-                        goalReached = true;
-                        break;
-                    } else if (this.level[cursor][startColumn] == '0') {
-                        System.out.println("Wall found");
-                        // TODO: Implement wall found
-                        break;
-                    } else {
-                        System.err.println("Invalid character in map");
-                        printMap();
-                        return null;
-                    }
-                }
-                break;
-            case DOWN:
-                // System.out.println("Before loop, agent x: " + this.agent.getX() + " agent y:
-                // " + this.agent.getY());
-                for (int cursor = startRow + 1; cursor < this.height; cursor++) {
-                    // System.out.println("Loop triggered");
-                    if (this.level[cursor][startColumn] == '1') {
-                        // System.out.println("agent found 1");
-                        this.level[cursor][startColumn] = 'x';
-                        this.level[this.agent.getY()][startColumn] = '0';
-                        this.agent.setY(cursor);
-                    } else if (this.level[cursor][startColumn] == 'y') {
-                        this.level[cursor][startColumn] = 'x';
-                        this.level[this.agent.getY()][startColumn] = '0';
-                        this.agent.setY(cursor);
-                        goalReached = true;
-                        break;
-                    } else if (this.level[cursor][startColumn] == '0') {
-                        System.out.println("Wall found");
-                        // TODO: Implement wall found
-                        break;
-                    } else {
-                        System.err.println("Invalid character in map");
-                        printMap();
-                        return null;
-                    }
-                }
-                System.out.println("Agent has moved DOWN");
-                break;
-            case LEFT:
-                // System.out.println("Before loop, agent x: " + this.agent.getX() + " agent y:
-                // " + this.agent.getY());
-                for (int cursor = startColumn - 1; cursor >= 0; cursor--) {
-                    // System.out.println("Loop triggered");
-                    if (this.level[startRow][cursor] == '1') {
-                        // System.out.println("agent found 1");
-                        this.level[startRow][cursor] = 'x';
-                        this.level[startRow][this.agent.getX()] = '0';
-                        this.agent.setX(cursor);
-                    } else if (this.level[startRow][cursor] == 'y') {
-                        this.level[startRow][cursor] = 'x';
-                        this.level[startRow][this.agent.getX()] = '0';
-                        this.agent.setX(cursor);
-                        goalReached = true;
-                        break;
-                    } else if (this.level[startRow][cursor] == '0') {
-                        System.out.println("Wall found");
-                        // TODO: Implement wall found
-                        break;
-                    } else {
-                        System.err.println("Invalid character in map");
-                        printMap();
-                        return null;
-                    }
-                }
-                System.out.println("Agent has moved LEFT");
-                break;
-            case RIGHT:
-                // System.out.println("Before loop, agent x: " + this.agent.getX() + " agent y:
-                // " + this.agent.getY());
-                for (int cursor = startColumn + 1; cursor < this.width; cursor++) {
-                    // System.out.println("Loop triggered");
-                    if (this.level[startRow][cursor] == '1') {
-                        //System.out.println("agent found 1");
-                        this.level[startRow][cursor] = 'x';
-                        this.level[startRow][this.agent.getX()] = '0';
-                        this.agent.setX(cursor);
-                    } else if (this.level[startRow][cursor] == 'y') {
-                        this.level[startRow][cursor] = 'x';
-                        this.level[startRow][this.agent.getX()] = '0';
-                        this.agent.setX(cursor);
-                        goalReached = true;
-                        break;
-                    } else if (this.level[startRow][cursor] == '0') {
-                        System.out.println("Wall found");
-                        // TODO: Implement wall found
-                        break;
-                    } else {
-                        System.err.println("Invalid character in map");
-                        printMap();
-                        return null;
-                    }
-                }
-                break;
-        }
-        System.out.println("Agent has moved " + move);
-        printMap();
-        if (goalReached) {
-            System.out.println("Goal reached");
-            levelUp();
-        }
-        return this.level;
-    }  
-
-    public Agent getAgent() {
-        return this.agent;
-    }
-
-    public void printMap() {
-        System.out.println("Level: ");
-        for (int i = 0; i < this.height; i++) {
-            for (int j = 0; j < this.width; j++) {
-                System.out.print(this.level[i][j]);
-            }
-            System.out.println();
-        }
-    }
-
-    @Override
-    public String toString() {
-        // TODO Auto-generated method stub
-        return super.toString();
     }
 
 }
