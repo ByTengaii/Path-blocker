@@ -1,33 +1,31 @@
-import java.util.*;
+import java.util.List;
 
 public class SearchAgent {
-    private Set<Node> visitedNodes = new HashSet<>();
-
-    public Node findSolution(Node node) {
-        if (visitedNodes.contains(node)) {
-            return null; // Node already visited, avoid infinite loop
-        }
-
-        visitedNodes.add(node);
-
+    
+    public List<Node> findSolution(Node node) {
         List<Moves> possibleMoves = node.getEnv().getPossibleMoves();
-        //System.out.println(possibleMoves);
+        
         for (Moves move : possibleMoves) {
             Environment newEnv = new Environment(node.getEnv()); // Deep copy constructor
             boolean reached = newEnv.action(move);
             Node child = new Node(node, newEnv, node.getGeneration() + 1);
             node.addChild(child);
-            if(reached){
+
+            if (reached) {
                 System.out.println("Solution found at generation " + child.getGeneration());
+                return child.getPath(); // Return the path to the solution
             }
         }
 
-        if (!node.getChildren().isEmpty()) {
-            for (Node child : node.getChildren()) {
-                findSolution(child); // Recursively build the tree
+        for (Node child : node.getChildren()) {
+            List<Node> path = findSolution(child); // Recursively build the tree
+            if (path != null) {
+                return path; // Return the path if a solution is found
             }
         }
 
-        return node; // Return the root node after building the tree
+        return null; // Return null if no solution is found
     }
+
+
 }

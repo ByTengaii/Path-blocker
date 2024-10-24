@@ -13,8 +13,24 @@ public class Node {
         this.parent = parent;
     }
 
+    Node(Node parent, Environment env, int generation, boolean isGoalReached) {
+        this.env = new Environment(env);
+        this.generation = generation;
+        this.parent = parent;
+    }
+
     public Environment getEnv() {
         return env;
+    }
+
+    public List<Node> getPath() {
+        List<Node> path = new ArrayList<>();
+        Node current = this;
+        while (current != null) {
+            path.add(0, current); // Add to the beginning of the list
+            current = current.parent;
+        }
+        return path;
     }
 
     public Node getParent() {return parent;}
@@ -34,7 +50,6 @@ public class Node {
     public Node getChildren(int index) {
         return children.get(index);
     }
-
 
     public int NumberOfChildren() {
         return children.size();
