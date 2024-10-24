@@ -6,8 +6,9 @@ public class Node {
     private int generation;
     private List<Node> children = new ArrayList<>();
 
-    Node(Node parent,Environment env, int generation) {
-        this.env = env;
+
+    Node(Node parent, Environment env, int generation) {
+        this.env = new Environment(env);
         this.generation = generation;
         this.parent = parent;
     }
@@ -30,9 +31,32 @@ public class Node {
         return children;
     }
 
+    public Node getChildren(int index) {
+        return children.get(index);
+    }
+
+
     public int NumberOfChildren() {
         return children.size();
     }
 
+    public void printAllData(){
+        System.out.println("Generation: " + generation);
+        System.out.println("Parent: " + parent);
+        System.out.println("Children: " + children);
+    }
 
+    public void traverse() {
+        traverse(this, 0);
+    }
+
+    private void traverse(Node node, int depth) {
+        for (int i = 0; i < depth; i++) {
+            System.out.print("  ");
+        }
+        System.out.println("Generation: " + node.getGeneration() + ", Number of Children: " + node.NumberOfChildren());
+        for (Node child : node.getChildren()) {
+            traverse(child, depth + 1);
+        }
+    }
 }

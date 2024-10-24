@@ -1,31 +1,33 @@
-import java.util.List;
+import java.util.*;
 
 public class SearchAgent {
-    
-    public Node findSolution (Node node) {
-        List<Moves> possibleMoves = node.getEnv().getPosssibleMoves();
+    private Set<Node> visitedNodes = new HashSet<>();
 
+    public Node findSolution(Node node) {
+        if (visitedNodes.contains(node)) {
+            return null; // Node already visited, avoid infinite loop
+        }
+
+        visitedNodes.add(node);
+
+        List<Moves> possibleMoves = node.getEnv().getPossibleMoves();
+        //System.out.println(possibleMoves);
         for (Moves move : possibleMoves) {
-            Environment newEnv = new Environment(node.getEnv());//copy the environment
+            Environment newEnv = new Environment(node.getEnv()); // Deep copy constructor
             boolean reached = newEnv.action(move);
-            if (reached) {
-                System.out.println("Solution found");
-                //TODO: print the solution
-                return node;
-            }
-            Node child = new Node(node,newEnv, node.getGeneration() + 1);
+            Node child = new Node(node, newEnv, node.getGeneration() + 1);
             node.addChild(child);
-        }
-        System.out.println("Number of childrens:"+ node.NumberOfChildren());
-        for (Node child : node.getChildren()) {
-            Node solution = findSolution(child);
-            if (solution != null) {
-                return solution;
+            if(reached){
+                System.out.println("Solution found at generation " + child.getGeneration());
             }
-
         }
 
-        System.out.println("Return null");
-        return null;
+        if (!node.getChildren().isEmpty()) {
+            for (Node child : node.getChildren()) {
+                findSolution(child); // Recursively build the tree
+            }
+        }
+
+        return node; // Return the root node after building the tree
     }
 }

@@ -15,14 +15,14 @@ public class Environment {
         updateWorld(level);
     }
 
+
     Environment(Environment env){
         this.width = env.width;
         this.height = env.height;
-        this.level = env.level;
-        this.agent = env.agent;
-        this.goal = env.goal;
+        this.level = copyWorld(env.level);
+        this.agent = new Agent(env.agent.getY(), env.agent.getX());
+        this.goal = new Goal(env.goal.getY(), env.goal.getX());
     }
-
 
     public boolean action(Moves move) {
         if (this.level == null) {
@@ -139,8 +139,8 @@ public class Environment {
                 }
                 break;
         }
-        System.out.println("Agent has moved " + move);
-        printMap();
+        //System.out.println(move + " action has been taken:");
+        //printMap();
         if (goalReached) {
             System.out.println("Goal reached");
             return true;
@@ -154,7 +154,6 @@ public class Environment {
     }
 
     public void printMap() {
-        System.out.println("Level: ");
         for (int i = 0; i < this.height; i++) {
             for (int j = 0; j < this.width; j++) {
                 System.out.print(this.level[i][j]);
@@ -168,7 +167,7 @@ public class Environment {
     };
 
     //! Can be more optimize
-    public List<Moves> getPosssibleMoves() {
+    public List<Moves> getPossibleMoves() {
         List<Moves> moveList = new ArrayList<>();
         Moves move;
         if (agent.getY() + 1 < this.height) {
@@ -212,15 +211,25 @@ public class Environment {
                 char[] row = lines.get(i).toCharArray();
                 this.level[i] = row;
             }
-            System.out.println("The level has been updated:");
-            printMap();
-            initAgentAndGoal();
+            //System.out.println("The level has been updated:");
+            //printMap();
+            initAgentAndGoal(this.level);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void initAgentAndGoal() {
+    private char[][] copyWorld(char[][] level) {
+        // TODO: Implement createWorld
+        char [][] copy = new char[level.length][level[0].length];
+        for (int i = 0; i < level.length; i++) {
+            for (int j = 0; j < level[0].length; j++) {
+                copy[i][j] = level[i][j];
+            }
+        }
+        return copy;
+    }
+    private void initAgentAndGoal(char[][] level) {
         boolean agentFound = false;
         boolean goalFound = false;
         for (int i = 0; i < this.height; i++) {
@@ -235,9 +244,8 @@ public class Environment {
             }
         }
         if (agentFound && goalFound) {
-            System.out
-                    .println("Agent has been initialized at position: " + this.agent.getX() + ", " + this.agent.getY());
-            System.out.println("Goal has been initialized at position: " + this.goal.getX() + ", " + this.goal.getY());
+            //System.out.println("Agent has been initialized at position: " + this.agent.getX() + ", " + this.agent.getY());
+            //System.out.println("Goal has been initialized at position: " + this.goal.getX() + ", " + this.goal.getY());
         } else if (!agentFound) {
             System.err.println("Agent not found in the level");
             printMap();
