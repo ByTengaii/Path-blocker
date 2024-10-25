@@ -1,7 +1,13 @@
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.io.IOException;
 import java.util.*;
+import javax.imageio.ImageIO;
+
 
 public class Environment {
 
@@ -254,6 +260,37 @@ public class Environment {
             System.err.println("Goal not found in the level");
             printMap();
             System.exit(1);
+        }
+    }
+
+    public void saveImage(String folderPath, int stepNumber) {
+        int cellSize = 10; // because you said 10 during the class
+        BufferedImage image = new BufferedImage(width * cellSize, height * cellSize, BufferedImage.TYPE_INT_RGB);
+        Graphics g = image.getGraphics();
+
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (level[i][j] == '0') { // black for wall
+                    g.setColor(Color.BLACK);
+                } else if (level[i][j] == '1') { // white for path
+                    g.setColor(Color.WHITE);
+                } else if (level[i][j] == 'x') { // blue for player
+                    g.setColor(Color.BLUE);
+                } else if (level[i][j] == 'y') { // green for goal
+                    g.setColor(Color.GREEN);
+                }
+                g.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
+                g.setColor(Color.GRAY);
+                g.drawRect(j * cellSize, i * cellSize, cellSize, cellSize);
+            }
+        }
+
+        g.dispose();
+        try {
+            File outputFile = new File(folderPath + String.format("%03d", stepNumber) + ".png");
+            ImageIO.write(image, "png", outputFile);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
