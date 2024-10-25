@@ -1,6 +1,4 @@
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.File;
 import java.util.List;
 
 public class Test {
@@ -12,16 +10,25 @@ public class Test {
             Node root = new Node(null, env, 0);
             
             List<Node> solutionPath = agent.findSolution(root);
-    
             
             if (solutionPath != null) {
-                System.out.println("Solution path of level: $" + i);
+                String folderPath = String.format("./level%02d/", i);
+                File levelFolder = new File(folderPath);
+                if (!levelFolder.exists()) {
+                    levelFolder.mkdirs();
+                }
+
+                System.out.println("Solution path of level: " + i);
+                int stepNumber = 1;
                 for (Node node : solutionPath) {
                     System.out.println("Generation: " + node.getGeneration());
                     node.getEnv().printMap();
+                    
+                    node.getEnv().saveImage(folderPath, stepNumber);
+                    stepNumber++;
                 }
             } else {
-                System.out.println("No solution found.");
+                System.out.println("No solution found for level: " + i);
             }
         }
     }
